@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" >
+    <title>Vue 示例</title>
+    <style>
+        [v-cloak]{
+            display: none;
+        }
+    </style>
+        </head>
+<body>
+<div id= "app" >
+   <input type="text" v-model="name" placeholder="your name">
+    <h1 v-cloak="">hello,{{name}}</h1>
+    <h2>{{date | formDate}}</h2>
+    <h2 v-pre>{{date}}</h2>
+    <h3>{{reverseName}}</h3>
+    <h1>{{now}}</h1>
+    <a href="http://www.baidu.com" @click="handleClick('禁止打开',$event)">打开链接</a>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script>
+    function padDate(value) {
+        return value<10?'0'+value:value;
+    }
+   var app =  new Vue({
+        el :'#app',
+        data : {
+            books : [{ name : 'vue.j s 实战》' },
+                     {name :'<JavaScrip语言精粹'},
+                     {name : '《JavaScript 高级程序设计'}],
+            name:"hcc",
+            date:new Date()
+        },
+       filters:{
+         formDate:function (value) {
+             var date= new Date(value);
+             var year= date.getFullYear() ;
+             var month= padDate(date.getMonth() + 1) ;
+             var day= padDate(date.getDate());
+             var hours= padDate(date.getHours());
+             var minutes = padDate (date.getMinutes());
+             var seconds = padDate (date.getSeconds());
+             return year + '-' + month +'- ' + day + ' ' + hours + '：' + minutes +': ' + seconds ;
+         }
+       },
+       computed:{
+         reverseName:function () {
+             return this.name.split('').reverse().join('')
+         },
+           now:function () {
+               return Date.now()
+           }
+       },
+       methods: {
+         /*now:function () {
+             return Date.now();
+         },*/
+           handleClick:function (message,event) {
+             event.preventDefault();
+             window.alert(message)
+         }
+       },
+       beforeCreate:function () {
+           console.log("-----beforecreated")
+           console.log(this.name);
+           console.log(this.$el)
+       },
+       created:function () {
+            console.log("-----created")
+           console.log(this.name);
+           console.log(this.$el)
+       },
+       beforeMount:function () {
+           console.log("-----beforemounted")
+           console.log(this.name);
+           console.log(this.$el)
+       },
+       mounted:function () {
+           console.log("-----mounted")
+           console.log(this.name);
+           console.log(this.$el);
+          this.timer = setInterval(()=>{
+              this.date = new Date()
+          },1000)
+       },
+       beforeDestroy:function () {
+           if(this.timer){
+               clearInterval(this.timer)
+           }
+       }
+    })
+
+    console.log(app.name)
+</script>
+</body>
+</html>
