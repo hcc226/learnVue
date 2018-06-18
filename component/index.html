@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <my-component></my-component>
+    <table>
+        <tbody is="my-component" ></tbody>
+    </table>
+    <input type="text" v-model="parentValue">
+    <my-parent :message="parentValue"></my-parent>
+    <p>总数：{{total}}</p>
+    <parent v-model="total" ref="comA"></parent>
+    {{message}}
+    <component-a></component-a>
+    <button @click="handleCC"></button>
+    <child-component>
+        <p>分发的内容</p>
+        <p>更多分发的内容</p>
+    </child-component>
+    <child-component2>
+        <h2 slot="header">标题</h2>
+        <p>正文内同</p>
+        <p>更多正文内同</p>
+        <div slot="footer">底部信息</div>
+    </child-component2>
+</div>
+<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+<script>
+    Vue.component('my-component',{
+        template:'<div>{{message}}<div>{{time}}</div></div>',
+        data:function () {
+            return {
+                message:"组件内容",
+                time: 111
+            }
+        }
+    })
+    Vue.component('my-parent',{
+        props:['message'],
+        template:'<div>{{message}}</div>'
+    })
+    Vue.component('parent',{
+      //  template:'<div><button @click="handleIncrease">+1</button><button @click="handleReduce">-1</button></div>',
+        props:['value'],
+        template:'<input v-model="value" @input="updateValue">',
+        data:function () {
+            return {
+                counter:0
+            }
+        },
+        methods:{
+            updateValue:function () {
+                this.$emit('input',event.target.value)
+            },
+            handleIncrease:function () {
+                this.counter++;
+                this.$emit('input',this.counter)
+            },
+            handleReduce:function () {
+              this.counter--;
+              this.$emit('input',this.counter)
+            }
+        }
+    })
+   /* var child = {
+        template:'<div>局部注册组件中的内容</div>'
+    }*/
+   
+   Vue.component('component-a',{
+       template:'<button @click="handleClick">change</button>',
+       methods:{
+           handleClick:function () {
+               this.$parent.message ='bbb'
+           }
+       }
+   })
+
+    Vue.component('child-component',{
+        template:'\
+        <div>\
+        <slot>\
+        <p>reeeeeeeedefault</p>\
+        </slot>\
+        </div>'
+    })
+
+    Vue.component('child-component2',{
+        template:'\
+        <div class="container">\
+         <div class="header">\
+           <slot name="header"></slot>\
+         </div>\
+         <div class="main">\
+          <slot></slot>\
+         </div>\
+         <div class="footer">\
+          <slot name="footer"></slot>\
+         </div>\
+        </div>'
+    })
+    var app = new Vue({
+        el:"#app",
+        data:{
+            parentValue:"i am your father",
+            total:0,
+            message:'aaa'
+        },
+        methods:{
+            handleGetTotal:function (total) {
+                this.total = total
+            },
+            handleCC:function () {
+                console.log(this.$refs.comA.counter);
+            }
+        }
+
+    })
+</script>
+</body>
+</html>
